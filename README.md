@@ -1,65 +1,58 @@
-# Crypto Trading Bot
+# 🤖 Bot-Trade — Automated Crypto Trading Bot
 
-Automated cryptocurrency trading bot for Binance — Spot & Futures. Built with Python, featuring a trend-momentum strategy, full risk management, backtesting engine, and Telegram notifications.
+A fully automated cryptocurrency trading bot for Binance, using a trend-momentum strategy with built-in risk management and real-time Telegram alerts.
 
 ## Features
 
-- **Strategy:** Trend-Momentum Hybrid (EMA cloud, RSI, MACD, volume confirmation)
-- **Risk Management:** ATR-based stop loss, partial TP, trailing stop, daily loss limit
-- **Multi-pair:** BTCUSDT, ETHUSDT, SOLUSDT (configurable)
-- **Timeframes:** 1H entry + 4H trend filter
-- **Execution:** Limit orders with market fallback
-- **Backtesting:** Walk-forward validation engine
-- **Dashboard:** Real-time monitoring via `dashboard.py`
-- **Notifications:** Telegram alerts & daily PnL summary
-- **Safety:** Testnet mode, circuit breaker, API key via env vars only
+- **Trend-Momentum Strategy** — combines EMA crossovers with RSI momentum signals
+- **Risk Management** — stop-loss, take-profit, and position sizing built-in
+- **Backtesting Engine** — test strategies against historical OHLCV data
+- **Telegram Alerts** — real-time trade notifications (open, close, PnL)
+- **Multi-pair Ready** — run on any Binance spot trading pair
 
 ## Tech Stack
 
-- Python 3.11+
-- Binance API (ccxt / REST + WebSocket)
-- SQLite (trade history & equity curve)
-- Telegram Bot API
+- **Language:** Python
+- **Exchange:** Binance API (via `python-binance`)
+- **Indicators:** TA-Lib / Pandas-TA
+- **Notifications:** Telegram Bot API
+- **Data:** Pandas, NumPy
 
-## Quick Start
+## Strategy Overview
+
+```
+EMA 20 crosses EMA 50 (upward) + RSI > 50 → BUY
+EMA 20 crosses EMA 50 (downward) + RSI < 50 → SELL
+Stop-Loss: 2% | Take-Profit: 4%
+```
+
+## Setup
 
 ```bash
-# 1. Install dependencies
+git clone https://github.com/devslotcy/bot-trade
+cd bot-trade
 pip install -r requirements.txt
-
-# 2. Set environment variables (never hardcode keys)
 cp .env.example .env
-# Edit .env with your Binance API keys and Telegram token
-
-# 3. Run on testnet first
-python main.py
+# Add Binance API keys and Telegram credentials
+python bot.py
 ```
 
-> See [SETUP_GUIDE.md](SETUP_GUIDE.md) for full setup, VPS deployment, and security guide.
+## Environment Variables
 
-## Project Structure
-
-```
-bot-trade/
-├── core/           # Config loader, logger, state management
-├── strategies/     # TrendMomentumHybrid strategy
-├── data/           # Market data fetcher & indicators
-├── execution/      # Order manager (limit/market, retries)
-├── risk/           # Position sizing, stop loss, circuit breaker
-├── backtest/       # Walk-forward backtesting engine
-├── utils/          # Database, Telegram notifications
-├── dashboard.py    # Live monitoring dashboard
-├── main.py         # Entry point
-└── config.yaml     # All parameters (no secrets here)
+```env
+BINANCE_API_KEY=your_key
+BINANCE_SECRET=your_secret
+TELEGRAM_BOT_TOKEN=your_token
+TELEGRAM_CHAT_ID=your_chat_id
+TRADING_PAIR=BTCUSDT
 ```
 
-## Security
+## Backtesting
 
-- API keys are **never** stored in code or `config.yaml`
-- Use environment variables: `BINANCE_API_KEY`, `BINANCE_API_SECRET`, `TELEGRAM_BOT_TOKEN`
-- Always start with `testnet: true` in `config.yaml`
-- Set IP whitelist on your Binance API key
+```bash
+python backtest.py --pair BTCUSDT --start 2024-01-01 --end 2024-12-31
+```
 
-## Risk Warning
+---
 
-This bot is for **educational purposes**. Crypto trading carries significant financial risk. Always test on testnet before using real funds.
+Built by [Mucahit Tiglioglu](https://github.com/devslotcy)
