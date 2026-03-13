@@ -1,0 +1,107 @@
+# =============================================================================
+# Crypto Trading Bot — Configuration
+# =============================================================================
+# SECURITY: Never commit real API keys. Use environment variables:
+#   BINANCE_API_KEY, BINANCE_API_SECRET, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+# =============================================================================
+
+# ── Exchange ──────────────────────────────────────────────────────────────────
+exchange:
+  testnet: true                   # Start on testnet; set false for live trading
+  mode: spot                      # "spot" | "futures"  (futures = USDT-margined)
+  max_leverage: 3                 # Only used in futures mode (max 3x)
+  recv_window: 5000               # Binance recvWindow (ms)
+  request_timeout: 10             # HTTP timeout (seconds)
+
+# ── Trading pairs ─────────────────────────────────────────────────────────────
+symbols:
+  - BTCUSDT
+  - ETHUSDT
+  - SOLUSDT
+
+# ── Timeframes ────────────────────────────────────────────────────────────────
+timeframes:
+  entry: "1h"                     # Primary entry/signal timeframe
+  trend: "4h"                     # Higher-timeframe trend filter
+
+# ── Strategy ─────────────────────────────────────────────────────────────────
+strategy:
+  name: "TrendMomentumHybrid"
+
+  # Trend filter (higher TF)
+  ema_fast: 50                    # EMA50 > EMA200 = uptrend
+  ema_slow: 200
+  supertrend_period: 10           # SuperTrend ATR period
+  supertrend_multiplier: 3.0      # SuperTrend ATR multiplier
+  use_supertrend: false           # true = use SuperTrend instead of EMA cloud
+
+  # Entry (entry TF)
+  pullback_ema: 20                # Pullback-to EMA (20 or 50)
+  rsi_period: 14
+  rsi_long_min: 40                # RSI must be > this for longs
+  rsi_short_max: 60               # RSI must be < this for shorts
+  macd_fast: 12
+  macd_slow: 26
+  macd_signal: 9
+  volume_sma_period: 20
+  volume_multiplier: 1.3          # Vol > 1.3× SMA to confirm
+
+  # Futures-only filters
+  funding_rate_long_max: 0.0001   # 0.01 % → avoid crowded longs
+  funding_rate_short_min: 0.0001  # shorts when funding > this
+
+# ── Risk management ───────────────────────────────────────────────────────────
+risk:
+  risk_per_trade: 0.0075          # 0.75% of equity per trade
+  atr_period: 14
+  sl_atr_multiplier: 1.2          # Stop = 1.2 × ATR from entry
+  tp_r_ratio: 3.0                 # Target 3R (configurable 2.5–4)
+  partial_tp_r: 1.5               # Close 50% position at 1.5R
+  partial_tp_pct: 0.50            # Fraction to close at partial TP
+  trailing_stop_activation_r: 1.2 # Activate trail after 1.2R
+  trailing_stop_atr_multiplier: 1.2
+  max_concurrent_positions: 3
+  daily_loss_limit: -0.02         # -2% of starting-day equity → halt
+  loss_cooldown_hours: 4          # Hours to wait after a losing trade
+  max_hold_hours: 72              # Time-based exit
+  slippage_guard_pct: 0.003       # Reject if slippage > 0.3%
+
+# ── Execution ─────────────────────────────────────────────────────────────────
+execution:
+  use_limit_orders: true          # LIMIT (maker); fallback to MARKET after timeout
+  limit_order_timeout_s: 10       # Seconds before switching to MARKET
+  max_retries: 3
+  retry_delay_s: 2
+
+# ── Reliability / circuit-breaker ────────────────────────────────────────────
+reliability:
+  heartbeat_interval_s: 60
+  circuit_breaker_failures: 5     # Consecutive failures before pause
+  circuit_breaker_pause_min: 20   # Minutes to pause
+  ws_reconnect_delay_s: 5
+  ws_max_reconnect_attempts: 10
+
+# ── Notifications ─────────────────────────────────────────────────────────────
+notifications:
+  telegram_enabled: true
+  daily_summary_utc_hour: 0       # Send daily PnL summary at 00:00 UTC
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+logging:
+  level: "INFO"                   # DEBUG | INFO | WARNING | ERROR
+  log_dir: "logs"
+  rotate_size_mb: 50
+  retention_days: 30
+
+# ── Database ─────────────────────────────────────────────────────────────────
+database:
+  path: "data/trades.db"          # SQLite for trade history & equity curve
+
+# ── Backtesting ───────────────────────────────────────────────────────────────
+backtest:
+  start_date: "2020-01-01"
+  end_date: "2025-12-31"
+  initial_capital: 10000.0        # USDT
+  commission_pct: 0.001           # 0.1% per side (taker; 0.075% with BNB)
+  walk_forward_splits: 5          # Number of WF folds
+  in_sample_pct: 0.70             # 70% in-sample, 30% out-of-sample per fold

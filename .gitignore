@@ -1,0 +1,27 @@
+# Secrets — NEVER commit
+.env
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Bot runtime files
+logs/
+data/*.db
+data/*.csv
+.bot_cmd
+.bot_status
+.open_positions.json
+.chart_*.json
+
+# OS
+.DS_Store
+Thumbs.db

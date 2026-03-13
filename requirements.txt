@@ -1,0 +1,40 @@
+# ── Core async & networking ──────────────────────────────────────────────────
+asyncio-throttle==1.0.2
+aiohttp==3.9.5
+websockets==12.0
+
+# ── Binance SDK ───────────────────────────────────────────────────────────────
+python-binance==1.0.19
+
+# ── Data & indicators ────────────────────────────────────────────────────────
+pandas==2.2.2
+numpy==1.26.4
+pandas-ta==0.3.14b0
+
+# ── Configuration & validation ───────────────────────────────────────────────
+pydantic==2.7.1
+pydantic-settings==2.3.4
+pyyaml==6.0.1
+python-dotenv==1.0.1
+
+# ── Dashboard ────────────────────────────────────────────────────────────────
+streamlit==1.35.0
+plotly==5.22.0
+streamlit-autorefresh==1.0.1
+
+# ── Notifications ────────────────────────────────────────────────────────────
+python-telegram-bot==21.3
+
+# ── Persistence ──────────────────────────────────────────────────────────────
+sqlalchemy==2.0.30
+aiosqlite==0.20.0
+
+# ── Scheduling & utilities ───────────────────────────────────────────────────
+apscheduler==3.10.4
+tenacity==8.3.0
+loguru==0.7.2
+pytz==2024.1
+python-dateutil==2.9.0
+
+# ── Backtesting metrics ──────────────────────────────────────────────────────
+scipy==1.13.1
